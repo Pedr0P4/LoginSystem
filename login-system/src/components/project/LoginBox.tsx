@@ -56,7 +56,7 @@ function LoginBox() {
       }
     };
     buscarDadosIniciais();
-  }, []);
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -128,7 +128,10 @@ function LoginBox() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="mt-6 w-full h-16 text-2xl ">
+          <Button
+            type="submit"
+            className="mt-6 w-full h-16 text-2xl bg-blue-950 hover:cursor-pointer hover:bg-blue-900"
+          >
             Sign in
           </Button>
         </form>
