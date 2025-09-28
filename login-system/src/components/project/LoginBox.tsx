@@ -1,5 +1,6 @@
 import client from "@/services/client";
 import axios, { AxiosError } from "axios";
+import { useEffect } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -15,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import B2BitLogo from "@/assets/B2Bit-Logo.png";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -41,6 +43,21 @@ interface ApiResponseError {
 }
 
 function LoginBox() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const buscarDadosIniciais = async () => {
+      try {
+        const response = await client.get("/profile/");
+        if (response.status === 200) {
+          navigate("/account");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    buscarDadosIniciais();
+  }, []);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,6 +71,7 @@ function LoginBox() {
       const response = await client.post<LoginResponse>("/login/", data);
       localStorage.setItem("tokens", JSON.stringify(response.data.tokens));
       console.log("Sucesso!");
+      navigate("/account");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError<ApiResponseError>;
@@ -73,10 +91,10 @@ function LoginBox() {
   }
 
   const labelStyle = "pt-4 text-lg";
-  const controlStyle = "pt-2 h-12";
+  const controlStyle = "pt-2 h-14 bg-gray-100 border-0 align-middle";
 
   return (
-    <div>
+    <div className="h-full line">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
